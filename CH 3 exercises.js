@@ -16,15 +16,16 @@ var model = function () {
 viz(Infer({ method: 'enumerate' }, model))
 
 // c.
+var fairCoin = function () { flip() }
+var biasedCoin = function () { flip(0.9) }
 
 var model = function () {
-    var fairCoin = function () { flip() }
-    var biasedCoin = function () { flip(0.9) }
     var chosenCoin = flip() ? biasedCoin : fairCoin
     condition(chosenCoin() && chosenCoin() && chosenCoin())
-    return chosenCoin === biasedCoin
+    return chosenCoin
 }
-viz(Infer({ method: 'enumerate' }, model))
+var log_prob = Infer({ method: 'enumerate' }, model).score(fairCoin)
+Math.exp(log_prob)
 
 
 // d.
