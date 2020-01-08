@@ -22,55 +22,136 @@ var biasedCoin = function () { flip(0.9) }
 var model = function () {
     var chosenCoin = flip() ? biasedCoin : fairCoin
     condition(chosenCoin() && chosenCoin() && chosenCoin())
-    return chosenCoin
+    return chosenCoin === biasedCoin;
 }
-var log_prob = Infer({ method: 'enumerate' }, model).score(fairCoin)
+
+var log_prob = Infer({ method: 'enumerate' }, model).score(true)
 Math.exp(log_prob)
 
 
 // d.
+var fairCoin = function () { flip() }
+var biasedCoin = function () { flip(0.9) }
 
 var model = function () {
-    var fairCoin = function () { flip() }
-    var biasedCoin = function () { flip(0.9) }
     var chosenCoin = flip() ? biasedCoin : fairCoin
-    condition(chosenCoin() + chosenCoin() === 1)
+    condition(chosenCoin() !== chosenCoin())
     return chosenCoin()
 }
-viz(Infer({ method: 'enumerate' }, model))
+
+var log_prob = Infer({ method: 'enumerate' }, model).score(true)
+Math.exp(log_prob)
 
 // 2.a.
 // yes b/c independent
 
+var model = function () {
+  var lungCancer = flip(1);
+  var cold = flip(0.2);
+
+  var cough = (
+    (cold && flip(0.5)) ||
+    (lungCancer && flip(0.3))
+  )
+
+  return cough
+}
+
+var log_prob = Infer({ method: 'enumerate' }, model).score(true)
+Math.exp(log_prob)
+
+
+// vs.
+
+var model = function () {
+  var lungCancer = flip(0.01);
+  var cold = flip(0.2);
+
+  var cough = (
+    (cold && flip(0.5)) ||
+    (lungCancer && flip(0.3))
+  )
+
+  condition(lungCancer)
+
+  return cough
+}
+
+var log_prob = Infer({ method: 'enumerate' }, model).score(true)
+Math.exp(log_prob)
+
+
+
 // 2.b.
 // something like this:
 
-var parent = flip()
-var child = parent
-var child2 = parent || flip()
+var origModel = function () {
+  var parent = flip();
+  var child = parent;
+  return parent;
+}
 
-// thought this seems a bit lame
+var origLogProb = Infer({ method: 'enumerate' }, origModel).score(true)
+console.log(Math.exp(origLogProb))
+
+var conditionModel = function () {
+  var parent = flip();
+  var child = parent;
+  condition(child)
+  return parent;
+}
+
+var conditionLogProb = Infer({ method: 'enumerate' }, conditionModel).score(true)
+console.log(Math.exp(conditionLogProb))
+
+var interventionModel = function () {
+  var parent = flip();
+  var child = true;
+  condition(child)
+  return parent;
+}
+
+var intervetionLogProb = Infer({ method: 'enumerate' }, interventionModel).score(true)
+console.log(Math.exp(intervetionLogProb))
+
+
+
+// though this seems a bit lame
 
 // 3.a.
 c = condition(a || b)
 p(a) | c = p(c | a)p(a)/p(c) = 1 * 0.5 / 0.75 = 2/3
 
-b.
+// b.
 a = nice('alice')
-c = condition(smiles('alice') && smiles('bob') && smiles('alice'));
-p(a) | c = p(c | a)p(a) / p(c) = ((0.8 * (0.7 * 0.8 + 0.3 * 0.5) * 0.8) * 0.7) / (0.8 * (0.7 * 0.8 + 0.3 * 0.5) * 0.8) = 0.7
-// this is the wrong answer
+c = condition(smiles('alice') && smiles('alice')); // bob is irrelevant here
+p(c | a) = 0.8 * 0.8
+p(c | ~a) = 0.5 * 0.5
+p(a) = 0.7
+p(~a) = 0.3
 
-//b.
+p(a | c) = (p(c | a) * p(a)) / p(c)
+= (p(c | a) * p(a)) / ((p(a) * p(c | a)) + (p(~a) * p(c | ~a)))
+= ((0.8 * 0.8) * 0.7) / ((0.7 * (0.8 * 0.8)) + (0.3 * (0.5 * 0.5)))
 
+// 4.
+
+// a.
+// Any given person is either nice or mean (this is a permanent personality trait).
+// 7/10 people are nice.
+// Nice people smile 8/10 times when you see them; mean people smile 5/10 times.
+// Now, assume that Alice smiled on 2 occassions when we saw her.
+// What's the probability that Alice is nice?
+
+// b.
 var extendedSmilesModel = function () {
     var nice = mem(function (person) { return flip(.7) });
-    var wantSomething = mem(function (person) { return nice(person) ? flip(0.3) : flip(0.7) });
+    var wantSomething = function (person) { return nice(person) ? flip(0.3) : flip(0.7) };
     var smiles = function (person) {
-        var becauseNice = nice(person) && flip(.8);
-        var becauseWantsSomething = wantSomething(person) && flip(.7);
-        var forNoReason = flip(0.5);
-        return becauseNice || becauseWantsSomething || forNoReason;
+      var becauseNice = nice(person) && flip(.8);
+      var becauseWantsSomething = wantSomething(person) && flip(.7);
+      var forNoReason = flip(0.5);
+      return becauseNice || becauseWantsSomething || forNoReason;
     }
 
     return smiles('alice')
@@ -78,7 +159,7 @@ var extendedSmilesModel = function () {
 
 Infer({ method: "enumerate" }, extendedSmilesModel)
 
-c
+// c
 
 var extendedSmilesModel = function () {
     var nice = mem(function (person) { return flip(.7) });
@@ -94,22 +175,37 @@ var extendedSmilesModel = function () {
     return wantSomething('Bob', 6);
 }
 
+var log_prob = Infer({ method: 'enumerate' }, extendedSmilesModel).score(true)
+Math.exp(log_prob)
 
-Infer({ method: "enumerate" }, extendedSmilesModel)
+// I had thought that the more likely someone is to smile because they're nice,
+// the less likely Bob would be to want something,
+// since smiling because nice would explain away his smiling.
+// But actually, the opposite is true:
+// if nice people are likely to smile,
+// then Bob not smiling on the previous days is evidence that he's not nice
+// and so it's more likely that he's smiling on the last day because he wants something.
 
+// Relatedly, setting p(smiles | nice) = 1
+// has the same effect as conditioning on Bob being nice
 
-5 a
+// For some reason, incresing p(smiles | wants something) a bit
+// increases p(wants something on the 6th day), but increasing it a lot has the opposite effect
+// I'm not sure why
+
+// 5 a
 
 var sprinklerModel = function () {
-    var sprinklerWorked = flip();
+    var sprinklerWorked = flip(0.5);
     var rained = flip(0.3);
     condition(sprinklerWorked || rained);
-    return [sprinklerWorked, rained];
+    return {sprinklerWorked: sprinklerWorked, rained: rained};
 }
 
 Infer({ method: "enumerate" }, sprinklerModel)
 
-b
+
+// b
 
 var sprinklerModel = function () {
     var mySprinklerWorked = flip();
@@ -121,7 +217,7 @@ var sprinklerModel = function () {
 
 Infer({ method: "enumerate" }, sprinklerModel)
 
-5 a
+// 6 a
 https://docs.google.com/spreadsheets/d/1uZ5beN4Cf6Tzzt-whHksf8Z9jbKrk5W4t-0TclT8dpA/edit#gid=0
 
 d
