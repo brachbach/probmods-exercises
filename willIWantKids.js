@@ -62,3 +62,63 @@ var model = function() {
 };
 
 viz(Infer({ method: "enumerate" }, model));
+
+// why doesn't the above code work?
+
+// simpler example 1: this works as expected when run as JS (Chrome console), but gives NaN when run in WebPPL:
+
+var censusFactor = function(weight) {
+  return {
+    name: "Census analysis",
+    p: 0.66,
+    source:
+      "https://docs.google.com/document/d/1QoSseXDlYSGl4bUvMzl2XIdo5NI9yhBqkHF5pd_Dqt8/edit#bookmark=id.thw9so6qoid1",
+    weight: weight
+  };
+};
+
+var IWantKidsFactors = [
+  {
+    name: "my a priori guess",
+    p: 0.3,
+    weight: 1
+  },
+
+  // downweighted because this is the rate for having kids, not wanting to have kids
+  censusFactor(0.5)
+];
+
+var partnerWantsKidsFactors = [
+  {
+    name: "my a priori guess",
+    p: 0.3,
+    weight: 1
+  },
+
+  // downweighted because this is the rate for having kids, not wanting to have kids
+  censusFactor(0.5)
+];
+
+var pFromFactors = function(factors) {
+  var weightedScore = factors.reduce(function(scoreSoFar, factor) {
+    return scoreSoFar + factor.p * factor.weight;
+  }, 0);
+
+  var totalWeights = factors.reduce(function(weightsSoFar, factor) {
+    return weightsSoFar + factor.weight;
+  }, 0);
+
+  return weightedScore / totalWeights;
+};
+
+console.log(pFromFactors(IWantKidsFactors));
+
+// Very simple example -- prints 6 as expected in Chrome console, prints a function in WebPPL
+
+var numbers = [1, 2, 3];
+
+console.log(
+  numbers.reduce(function(sumSoFar, number) {
+    return sumSoFar + number;
+  })
+);
