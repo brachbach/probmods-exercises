@@ -2,4 +2,19 @@
 - for the candidates -- why does the prior model dip at the extremes (0 and 1)?
 - in the helping example -- you have to realize that "research assistant" is relevant,
 and that e.g. "time of day" is not relevant, to realize that you should slice the data like this, right?
-- 
+-- won't posteriorPredictive1 deep equal posteriorPredictive2, at least at the time they're created?
+---they're like literally the same thing on two subsequent lines
+- https://www.quora.com/What-is-marginalization-in-probability
+- "For purposes of scientific hypothesis testing, a trick coin is formalized as a coin with some unknown weight:"
+-- makes sense, but -- is that the only choice?
+-- it's kinda weird that in the program, p can either be the number 0.5 or the uniform distribution,
+but I guess it's easy to imagine how webppl magically figures out the right thing to do
+- I only have a vague understanding of how rejection sampling works
+
+ping-pong
+* how did they decide that the parameters should only go from -1 to 1?
+  * The actual strength values go all the way out to slightly over 2
+* what's a drift kernel?
+  * https://webppl.readthedocs.io/en/master/driftkernels.html
+* huh, so I guess an r^2 value is the amount of the variance explained?
+* what does "probability" mean in the viz.table result?
