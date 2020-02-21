@@ -38,7 +38,7 @@ var partnerWantsKidsFactors = [
 
 var pFromFactors = function(factors) {
   var weightedScore = reduce(
-    function(scoreSoFar, factor) {
+    function(factor, scoreSoFar) {
       return scoreSoFar + factor.p * factor.weight;
     },
     0,
@@ -46,7 +46,7 @@ var pFromFactors = function(factors) {
   );
 
   var totalWeights = reduce(
-    function(weightsSoFar, factor) {
+    function(factor, weightsSoFar) {
       return weightsSoFar + factor.weight;
     },
     0,
@@ -70,61 +70,3 @@ var model = function() {
 };
 
 viz(Infer({ method: "enumerate" }, model));
-
-// Simple example: Reduce works properly here
-
-var numbers = [1, 2, 3];
-
-console.log(
-  reduce(
-    function(sumSoFar, number) {
-      return sumSoFar + number;
-    },
-    0,
-    numbers
-  )
-);
-
-// Simple example, doesn't work right:
-
-var IWantKidsFactors = [
-  {
-    name: "my a priori guess",
-    p: 0.3,
-    weight: 1
-  }
-];
-
-var pFromFactors = function(factors) {
-  var weightedScore = reduce(
-    function(scoreSoFar, factor) {
-      return scoreSoFar + factor.p * factor.weight;
-    },
-    0,
-    factors
-  );
-
-  return weightedScore;
-};
-
-console.log(pFromFactors(IWantKidsFactors));
-
-// Equivalent works in JS:
-
-var IWantKidsFactors = [
-  {
-    name: "my a priori guess",
-    p: 0.3,
-    weight: 1
-  }
-];
-
-var pFromFactors = function(factors) {
-  var weightedScore = factors.reduce(function(scoreSoFar, factor) {
-    return scoreSoFar + factor.p * factor.weight;
-  }, 0);
-
-  return weightedScore;
-};
-
-console.log(pFromFactors(IWantKidsFactors));
