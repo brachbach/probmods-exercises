@@ -46,3 +46,42 @@
 // Prediction 1: snap judgement: 40%
 // 80% CI of my credence after 5 hours of research: 25% to 90%
 // I guess technically a snap judgement prediction isn't allowed :(
+
+/*
+# What sort of outside view/reference class-based view can I apply to this question?
+- How have predictors done on the question so far?
+    - ...adjusting for the fact that there's still lots of time, maybe based on data from other Kaggle projects
+    - can I find anything relevant?
+- How do predictors tend to do on Kaggle questions?
+    - ...on similar Kaggle questions?
+        - similar level of difficulty
+        - similar prize money
+        - similar task type
+        - similarly novel task, even if the type of the task is quite different
+        - this is sort of interesting: https://bdtechtalks.com/2020/02/19/kaggle-arc-challenge-francois-chollet/
+            - Chollet claims that you can make some progress via program synthesis
+                - https://twitter.com/fchollet/status/1228402162687868928?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1228402162687868928&ref_url=https%3A%2F%2Fbdtechtalks.com%2F2020%2F02%2F19%2Fkaggle-arc-challenge-francois-chollet%2F
+            - Chollet thinks that someone trying hard could get to 5-10% in a few weeks
+                - https://twitter.com/fchollet/status/1228056479854317568?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1228056479854317568&ref_url=https%3A%2F%2Fbdtechtalks.com%2F2020%2F02%2F19%2Fkaggle-arc-challenge-francois-chollet%2F
+                - I think performance on Kaggle so far has proved this false
+                    - or at least people haven't submitted their successful models if they made them
+            - Kaggle CEO calls it the toughest challenge in a while: https://twitter.com/benhamner/status/1228070207400202240?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1228070207400202240&ref_url=https%3A%2F%2Fbdtechtalks.com%2F2020%2F02%2F19%2Fkaggle-arc-challenge-francois-chollet%2F
+- How have people done on this dataset so far?
+    - anything in the original paper? (https://arxiv.org/pdf/1911.01547.pdf)
+        - seems like not, and the paper explicitly claims that the tasks are "beyond deep learning"
+    - any work from anyone else on this?
+        - tried to search for citing papers, didn't find any
+        - Googled "Abstraction and Reasoning Corpus francois Chollet"
+- Chollet's Twitter
+    - thinks that progress on Kaggle so far is real
+        - https://twitter.com/fchollet/status/1230605659852296193
+    - based on scrolling through his Twitter and searching, I think I've now grabbed all of his tweets about it
+- ideas based on this research:
+    - curve-fit to progress so far
+    - see how people have done on the very hardest Kaggle challenges that have big $ behind them
+    
+
+# Automation ideas
+- based on Kaggle leaderboard
+- based on Chollet tweets
+*/
